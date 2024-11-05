@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiGreenPilot CO₂-Bilanzierung</title>
+    <style>
+ :root {
+            --primary-color: #00796b;
+            --secondary-color: #4db6ac;
+            --accent-color: #004d40;
+            --background-color: #f5f7f9;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .scope-section {
+            margin-bottom: 2rem;
+        }
+
+        .scope-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,121,107,0.1);
+        }
+
+        .results {
+            background-color: #f8faf9;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .result-item-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .total-emissions {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .total-emissions-label {
+            font-size: 1.2rem;
+        }
+
+        .total-emissions-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background-color: rgba(77,182,172,0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .logo-fixed {
+            position: fixed;
+            top: 10px; /* Abstand von oben */
+            left: 10px; /* Abstand von der linken Seite */
+            width: 50px; /* Logo-Größe anpassen */
+            z-index: 1000; /* Sicherstellen, dass das Logo über anderen Inhalten bleibt */}
+        :root {
+            --primary-color: #00796b;
+            --secondary-color: #4db6ac;
+            --accent-color: #004d40;
+            --background-color: #f5f7f9;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .scope-section {
+            margin-bottom: 2rem;
+        }
+
+        .scope-title {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,121,107,0.1);
+        }
+
+        .results {
+            background-color: #f8faf9;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .result-item-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-item-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .total-emissions {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .total-emissions-label {
+            font-size: 1.2rem;
+        }
+
+        .total-emissions-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background-color: rgba(3, 65, 59, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.header {
+    background-color: #006B5B; /* Dunkelgrüner Hintergrund */
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    width: 50px !important; /* Größe anpassen */
+    height: auto !important;}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text h1 {
+    font-size: 1.1rem; /* Kleinere Überschrift */
+    margin: 0;
+    color: white;
+}
+
+.header-text p {
+    font-size: 0.8rem; /* Kleinerer Subtext */
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://digi-green-pilot.de/wp-content/uploads/2023/10/DGP-Logo-1024x438.png" 
+     alt="DigiGreen Pilot Logo" 
+     class="logo" 
+     style="width: 250px; height: auto; position: fixed; top: 10px; left: 10px;">
+            <div class="header-text">
+            <h1>DigiGreenPilot CO₂-Bilanzierung</h1>
+            <p>Erfassen und analysieren Sie Ihre betrieblichen Treibhausgasemissionen</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Emissionserfassung
+            </div>
+            <div class="card-body">
+                <!-- Scope 1: Direkte Emissionen -->
+                <div class="scope-section">
+                    <h2 class="scope-title">Scope 1: Direkte Emissionen</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="heizoel">Heizöl (Liter/Jahr)</label>
+                            <input type="number" id="heizoel" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="erdgas">Erdgas (kWh/Jahr)</label>
+                            <input type="number" id="erdgas" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="diesel">Fuhrpark - Diesel (Liter/Jahr)</label>
+                            <input type="number" id="diesel" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="benzin">Fuhrpark - Benzin (Liter/Jahr)</label>
+                            <input type="number" id="benzin" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+             
+<div class="scope-section">
+    <h2 class="scope-title">
+        <span class="scope-icon">  1</span>
+           Scope 1: Direkte Emissionen
+    </h2>
+
+    <!-- Subscope 1A: Stationäre Verbrennung -->
+    <div class="subscope">
+        <h3 class="subscope-title">
+            <span class="subscope-icon">🏢</span>
+            1A: Stationäre Verbrennung
+        </h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="heizoel">Heizöl (Liter/Jahr)</label>
+                <input type="number" id="heizoel" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="erdgas">Erdgas (kWh/Jahr)</label>
+                <input type="number" id="erdgas" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="pellets">Holzpellets (kg/Jahr)</label>
+                <input type="number" id="pellets" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="fluessiggas">Flüssiggas (kg/Jahr)</label>
+                <input type="number" id="fluessiggas" min="0" value="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscope 1B: Mobile Verbrennung -->
+    <div class="subscope">
+        <h3 class="subscope-title">
+            <span class="subscope-icon">🚗</span>
+            1B: Mobile Verbrennung (Fuhrpark)
+        </h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="diesel_pkw">PKW - Diesel (Liter/Jahr)</label>
+                <input type="number" id="diesel_pkw" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="benzin_pkw">PKW - Benzin (Liter/Jahr)</label>
+                <input type="number" id="benzin_pkw" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="diesel_lkw">LKW - Diesel (Liter/Jahr)</label>
+                <input type="number" id="diesel_lkw" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="gas_fahrzeuge">Gasfahrzeuge (kg/Jahr)</label>
+                <input type="number" id="gas_fahrzeuge" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="elektro_fahrzeuge">Elektrofahrzeuge (kWh/Jahr)</label>
+                <input type="number" id="elektro_fahrzeuge" min="0" value="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscope 1C: Prozessemissionen -->
+    <div class="subscope">
+        <h3 class="subscope-title">
+            <span class="subscope-icon">⚙️</span>
+            1C: Prozessemissionen
+        </h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="kaeltemittel">Kältemittel (kg/Jahr)</label>
+                <input type="number" id="kaeltemittel" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="loesemittel">Lösemittel (Liter/Jahr)</label>
+                <input type="number" id="loesemittel" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="schwefelhexafluorid">Schwefelhexafluorid (kg/Jahr)</label>
+                <input type="number" id="schwefelhexafluorid" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="prozesswaerme">Prozesswärme (kWh/Jahr)</label>
+                <input type="number" id="prozesswaerme" min="0" value="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscope 1D: Landwirtschaft -->
+    <div class="subscope">
+        <h3 class="subscope-title">
+            <span class="subscope-icon">🌾</span>
+            1D: Landwirtschaftliche Emissionen
+        </h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="duenger">Düngemitteleinsatz (kg/Jahr)</label>
+                <input type="number" id="duenger" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="tierhaltung">Tierhaltung (Anzahl Tiere)</label>
+                <input type="number" id="tierhaltung" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="landmaschinen">Landmaschinen Diesel (Liter/Jahr)</label>
+                <input type="number" id="landmaschinen" min="0" value="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscope 1E: Notfallsysteme -->
+    <div class="subscope">
+        <h3 class="subscope-title">
+            <span class="subscope-icon">🚨</span>
+            1E: Notfall- und Backup-Systeme
+        </h3>
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="notstrom">Notstromaggregate Diesel (Liter/Jahr)</label>
+                <input type="number" id="notstrom" min="0" value="0">
+            </div>
+            <div class="input-group">
+                <label for="feuersysteme">Feuerlöschsysteme (kg CO2/Jahr)</label>
+                <input type="number" id="feuersysteme" min="0" value="0">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                <!-- Scope 2: Indirekte Emissionen -->
+                <div class="scope-section">
+                    <h2 class="scope-title">Scope 2: Indirekte Emissionen</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="elektrizitaet">Stromverbrauch (kWh/Jahr)</label>
+                            <input type="number" id="elektrizitaet" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="fernwaerme">Fernwärme (kWh/Jahr)</label>
+                            <input type="number" id="fernwaerme" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scope-section">
+                    <h2 class="scope-title">
+                        <span class="scope-icon">2</span>
+                        Scope 2: Indirekte Emissionen
+                    </h2>
+                
+                    <!-- Subscope 2A: Stromverbrauch -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">⚡</span>
+                            2A: Stromverbrauch
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="strom_standard">Standardstrom (kWh/Jahr)</label>
+                                <input type="number" id="strom_standard" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="strom_oeko">Ökostrom (kWh/Jahr)</label>
+                                <input type="number" id="strom_oeko" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="strom_eigen">Eigenerzeugung (kWh/Jahr)</label>
+                                <input type="number" id="strom_eigen" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="strom_pv">Photovoltaik Einspeisung (kWh/Jahr)</label>
+                                <input type="number" id="strom_pv" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 2B: Wärme und Kälte -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">🌡️</span>
+                            2B: Wärme und Kälte
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="fernwaerme_standard">Fernwärme Standard (kWh/Jahr)</label>
+                                <input type="number" id="fernwaerme_standard" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="fernwaerme_bio">Fernwärme Bio (kWh/Jahr)</label>
+                                <input type="number" id="fernwaerme_bio" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="fernkaelte">Fernkälte (kWh/Jahr)</label>
+                                <input type="number" id="fernkaelte" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="prozesskaelte">Prozesskälte (kWh/Jahr)</label>
+                                <input type="number" id="prozesskaelte" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 2C: Standortspezifische Energieverbräuche -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">📍</span>
+                            2C: Standortspezifische Energieverbräuche
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="standort_name">Standort Name</label>
+                                <input type="text" id="standort_name" placeholder="z.B. Werk 1">
+                            </div>
+                            <div class="input-group">
+                                <label for="standort_strom">Stromverbrauch Standort (kWh/Jahr)</label>
+                                <input type="number" id="standort_strom" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="standort_waerme">Wärmeverbrauch Standort (kWh/Jahr)</label>
+                                <input type="number" id="standort_waerme" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="standort_kaelte">Kälteverbrauch Standort (kWh/Jahr)</label>
+                                <input type="number" id="standort_kaelte" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 2D: Energiemix und Zertifikate -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">📊</span>
+                            2D: Energiemix und Zertifikate
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="strom_mix">Strommix</label>
+                                <select id="strom_mix">
+                                    <option value="de">Deutscher Strommix</option>
+                                    <option value="oeko">100% Ökostrom</option>
+                                    <option value="custom">Individueller Mix</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="herkunftsnachweise">Herkunftsnachweise (kWh/Jahr)</label>
+                                <input type="number" id="herkunftsnachweise" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="kompensation">CO₂-Kompensation (t/Jahr)</label>
+                                <input type="number" id="kompensation" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 2E: Energieeffizienzmaßnahmen -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">📈</span>
+                            2E: Energieeffizienzmaßnahmen
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="einsparung_strom">Stromeinsparung (kWh/Jahr)</label>
+                                <input type="number" id="einsparung_strom" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="einsparung_waerme">Wärmeeinsparung (kWh/Jahr)</label>
+                                <input type="number" id="einsparung_waerme" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="eigenverbrauch_pv">PV-Eigenverbrauch (kWh/Jahr)</label>
+                                <input type="number" id="eigenverbrauch_pv" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scope 3: Weitere indirekte Emissionen -->
+                <div class="scope-section">
+                    <h2 class="scope-title">Scope 3: Weitere indirekte Emissionen</h2>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="flugreisen">Geschäftsreisen - Flug (km/Jahr)</label>
+                            <input type="number" id="flugreisen" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="zugreisen">Geschäftsreisen - Bahn (km/Jahr)</label>
+                            <input type="number" id="zugreisen" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="pendeln">Pendeln der Mitarbeiter (km/Jahr)</label>
+                            <input type="number" id="pendeln" min="0" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scope-section">
+                    <h2 class="scope-title">
+                        <span class="scope-icon">3</span>
+                        Scope 3: Weitere indirekte Emissionen
+                    </h2>
+                
+                    <!-- Subscope 3A: Geschäftsreisen -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">✈️</span>
+                            3A: Geschäftsreisen
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="flug_kurz">Flüge Kurzstrecke (km/Jahr)</label>
+                                <input type="number" id="flug_kurz" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="flug_mittel">Flüge Mittelstrecke (km/Jahr)</label>
+                                <input type="number" id="flug_mittel" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="flug_lang">Flüge Langstrecke (km/Jahr)</label>
+                                <input type="number" id="flug_lang" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="bahn_nah">Bahn Nahverkehr (km/Jahr)</label>
+                                <input type="number" id="bahn_nah" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="bahn_fern">Bahn Fernverkehr (km/Jahr)</label>
+                                <input type="number" id="bahn_fern" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="hotel">Hotelübernachtungen (Nächte/Jahr)</label>
+                                <input type="number" id="hotel" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3B: Mitarbeitermobilität -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">🚗</span>
+                            3B: Mitarbeitermobilität
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="pendeln_pkw">Pendeln PKW (km/Jahr)</label>
+                                <input type="number" id="pendeln_pkw" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="pendeln_oepnv">Pendeln ÖPNV (km/Jahr)</label>
+                                <input type="number" id="pendeln_oepnv" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="pendeln_fahrrad">Pendeln Fahrrad (km/Jahr)</label>
+                                <input type="number" id="pendeln_fahrrad" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="homeoffice">Homeoffice (Tage/Jahr)</label>
+                                <input type="number" id="homeoffice" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3C: Logistik und Transport -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">🚛</span>
+                            3C: Logistik und Transport
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="transport_strasse">Transport Straße (tkm/Jahr)</label>
+                                <input type="number" id="transport_strasse" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="transport_schiene">Transport Schiene (tkm/Jahr)</label>
+                                <input type="number" id="transport_schiene" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="transport_see">Transport Seefracht (tkm/Jahr)</label>
+                                <input type="number" id="transport_see" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="transport_luft">Transport Luftfracht (tkm/Jahr)</label>
+                                <input type="number" id="transport_luft" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3D: Materialien und Rohstoffe -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">📦</span>
+                            3D: Materialien und Rohstoffe
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="papier">Papier/Pappe (t/Jahr)</label>
+                                <input type="number" id="papier" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="kunststoffe">Kunststoffe (t/Jahr)</label>
+                                <input type="number" id="kunststoffe" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="metalle">Metalle (t/Jahr)</label>
+                                <input type="number" id="metalle" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="chemikalien">Chemikalien (t/Jahr)</label>
+                                <input type="number" id="chemikalien" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3E: Abfall und Recycling -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">♻️</span>
+                            3E: Abfall und Recycling
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="restmuell">Restmüll (t/Jahr)</label>
+                                <input type="number" id="restmuell" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="altpapier">Altpapier (t/Jahr)</label>
+                                <input type="number" id="altpapier" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="wertstoffe">Wertstoffe (t/Jahr)</label>
+                                <input type="number" id="wertstoffe" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="sonderabfall">Sonderabfall (t/Jahr)</label>
+                                <input type="number" id="sonderabfall" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3F: IT und Digitalisierung -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">💻</span>
+                            3F: IT und Digitalisierung
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="rechenzentrum">Rechenzentrumsnutzung (kWh/Jahr)</label>
+                                <input type="number" id="rechenzentrum" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="cloud_dienste">Cloud-Dienste (GB/Jahr)</label>
+                                <input type="number" id="cloud_dienste" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="endgeraete">IT-Endgeräte (Stück)</label>
+                                <input type="number" id="endgeraete" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Subscope 3G: Wassermanagement -->
+                    <div class="subscope">
+                        <h3 class="subscope-title">
+                            <span class="subscope-icon">💧</span>
+                            3G: Wassermanagement
+                        </h3>
+                        <div class="input-grid">
+                            <div class="input-group">
+                                <label for="wasser_frisch">Frischwasserverbrauch (m³/Jahr)</label>
+                                <input type="number" id="wasser_frisch" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="wasser_abwasser">Abwasser (m³/Jahr)</label>
+                                <input type="number" id="wasser_abwasser" min="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="wasser_aufbereitung">Wasseraufbereitung (kWh/Jahr)</label>
+                                <input type="number" id="wasser_aufbereitung" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results">
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-item-title">Scope 1 Emissionen</div>
+                            <div class="result-item-value" id="scope1">0 kg CO₂</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-title">Scope 2 Emissionen</div>
+                            <div class="result-item-value" id="scope2">0 kg CO₂</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-item-title">Scope 3 Emissionen</div>
+                            <div class="result-item-value" id="scope3">0 kg CO₂</div>
+                        </div>
+                    </div>
+
+                    <div class="total-emissions">
+                        <span class="total-emissions-label">Gesamtemissionen</span>
+                        <span class="total-emissions-value" id="gesamtEmissionen">0 kg CO₂/Jahr</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p>Die Berechnung basiert auf den aktuellen Emissionsfaktoren des Umweltbundesamtes (2024).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Erweiterte CO2-Faktoren
+        // Erweiterte Emissionsfaktoren für alle Subscopes
+const emissionFactors = {
+    // Scope 1A: Stationäre Verbrennung
+    heizoel: 2.68,        // kg CO2 pro Liter
+    erdgas: 0.201,        // kg CO2 pro kWh
+    pellets: 0.023,       // kg CO2 pro kg
+    fluessiggas: 3.14,    // kg CO2 pro kg
+
+    // Scope 1B: Mobile Verbrennung
+    diesel_pkw: 2.65,     // kg CO2 pro Liter
+    benzin_pkw: 2.37,     // kg CO2 pro Liter
+    diesel_lkw: 2.65,     // kg CO2 pro Liter
+    gas_fahrzeuge: 2.79,  // kg CO2 pro kg
+    elektro_fahrzeuge: 0.420, // kg CO2 pro kWh
+
+    // Scope 1C: Prozessemissionen
+    kaeltemittel: 1430,   // GWP (Global Warming Potential)
+    loesemittel: 1.28,    // kg CO2 pro Liter
+    schwefelhexafluorid: 22800, // GWP
+    prozesswaerme: 0.201, // kg CO2 pro kWh
+
+    // Scope 2A: Strom
+    strom_standard: 0.420,   // kg CO2 pro kWh
+    strom_oeko: 0.019,      // kg CO2 pro kWh
+    strom_eigen: 0.050,     // kg CO2 pro kWh
+
+    // Scope 2B: Wärme/Kälte
+    fernwaerme_standard: 0.180,  // kg CO2 pro kWh
+    fernwaerme_bio: 0.020,      // kg CO2 pro kWh
+    fernkaelte: 0.140,          // kg CO2 pro kWh
+    prozesskaelte: 0.420,       // kg CO2 pro kWh
+
+    // Scope 3A: Geschäftsreisen
+    flug_kurz: 0.27,     // kg CO2 pro km
+    flug_mittel: 0.20,   // kg CO2 pro km
+    flug_lang: 0.15,     // kg CO2 pro km
+    bahn_nah: 0.060,     // kg CO2 pro km
+    bahn_fern: 0.032,    // kg CO2 pro km
+    hotel: 31.0,         // kg CO2 pro Übernachtung
+
+    // Weitere Faktoren für andere Subscopes...
+};
+
+// Berechnung der Emissionen für jeden Subscope
+function calculateEmissions() {
+    // Scope 1A: Stationäre Verbrennung
+    const scope1A = 
+        getValue('heizoel') * emissionFactors.heizoel +
+        getValue('erdgas') * emissionFactors.erdgas +
+        getValue('pellets') * emissionFactors.pellets +
+        getValue('fluessiggas') * emissionFactors.fluessiggas;
+
+    // Scope 1B: Mobile Verbrennung
+    const scope1B = 
+        getValue('diesel_pkw') * emissionFactors.diesel_pkw +
+        getValue('benzin_pkw') * emissionFactors.benzin_pkw +
+        getValue('diesel_lkw') * emissionFactors.diesel_lkw +
+        getValue('gas_fahrzeuge') * emissionFactors.gas_fahrzeuge +
+        getValue('elektro_fahrzeuge') * emissionFactors.elektro_fahrzeuge;
+
+    // Scope 1C: Prozessemissionen
+    const scope1C = 
+        getValue('kaeltemittel') * emissionFactors.kaeltemittel +
+        getValue('loesemittel') * emissionFactors.loesemittel +
+        getValue('schwefelhexafluorid') * emissionFactors.schwefelhexafluorid +
+        getValue('prozesswaerme') * emissionFactors.prozesswaerme;
+
+    // Scope 2A: Strom
+    const scope2A = 
+        getValue('strom_standard') * emissionFactors.strom_standard +
+        getValue('strom_oeko') * emissionFactors.strom_oeko +
+        getValue('strom_eigen') * emissionFactors.strom_eigen;
+
+    // Scope 2B: Wärme/Kälte
+    const scope2B = 
+        getValue('fernwaerme_standard') * emissionFactors.fernwaerme_standard +
+        getValue('fernwaerme_bio') * emissionFactors.fernwaerme_bio +
+        getValue('fernkaelte') * emissionFactors.fernkaelte +
+        getValue('prozesskaelte') * emissionFactors.prozesskaelte;
+
+    // Scope 3A: Geschäftsreisen
+    const scope3A = 
+        getValue('flug_kurz') * emissionFactors.flug_kurz +
+        getValue('flug_mittel') * emissionFactors.flug_mittel +
+        getValue('flug_lang') * emissionFactors.flug_lang +
+        getValue('bahn_nah') * emissionFactors.bahn_nah +
+        getValue('bahn_fern') * emissionFactors.bahn_fern +
+        getValue('hotel') * emissionFactors.hotel;
+
+    // Gesamtwerte berechnen
+    const totalScope1 = scope1A + scope1B + scope1C;
+    const totalScope2 = scope2A + scope2B;
+    const totalScope3 = scope3A; // + weitere Scope 3 Subscopes
+
+    // Ergebnisse aktualisieren
+    updateResults({
+        scope1A,
+        scope1B,
+        scope1C,
+        scope2A,
+        scope2B,
+        scope3A,
+        totalScope1,
+        totalScope2,
+        totalScope3
+    });
+}
+
+// Hilfsfunktion zum Auslesen der Eingabewerte
+function getValue(id) {
+    const element = document.getElementById(id);
+    return element ? parseFloat(element.value) || 0 : 0;
+}
+
+// Ergebnisse auf der Seite aktualisieren
+function updateResults(results) {
+    // Subscope Ergebnisse
+    updateValue('scope1A_result', results.scope1A);
+    updateValue('scope1B_result', results.scope1B);
+    updateValue('scope1C_result', results.scope1C);
+    updateValue('scope2A_result', results.scope2A);
+    updateValue('scope2B_result', results.scope2B);
+    updateValue('scope3A_result', results.scope3A);
+
+    // Gesamtergebnisse
+    updateValue('scope1', results.totalScope1);
+    updateValue('scope2', results.totalScope2);
+    updateValue('scope3', results.totalScope3);
+
+    // Gesamtemissionen
+    const total = results.totalScope1 + results.totalScope2 + results.totalScope3;
+    updateValue('gesamtEmissionen', total);
+}
+
+// Hilfsfunktion zum Aktualisieren der Anzeige
+function updateValue(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = `${value.toFixed(2)} kg CO₂`;
+    }
+}
+
+// Event Listener für alle Eingabefelder
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', calculateEmissions);
+});
+
+// Initiale Berechnung
+calculateEmissions();
+    </script>
+</body>
+</html>
